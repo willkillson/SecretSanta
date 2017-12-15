@@ -11,7 +11,7 @@
 #include <algorithm> //std::random_shuffle
 
 #define IN_FILEPATH "../lists"
-#define OUT_FILEPATH "../lists"
+#define OUT_FILEPATH "../lists/Finished/"
 
 
 class People {
@@ -31,7 +31,6 @@ private:
 void readInData(std::vector <People> &list)
 {
 	std::ostringstream inputFilePath;
-	std::ostringstream myOutputFilePath;
 
 	inputFilePath << IN_FILEPATH << "/names.txt";
 	//need to make outputs for every name
@@ -67,40 +66,89 @@ void readInData(std::vector <People> &list)
 		list.push_back(person);
 
 	}
+	input.close();
 
 }
 void printList(std::vector <People> list)
 {
-
+	std::cout << std::endl;
 	std::cout << "List total is ";
 	std::cout << list.size() << std::endl << std::endl;
 
-	for (int i = 0; i < list.size(); i++)
+	for (unsigned int i = 0; i < list.size(); i++)
 	{
 		std::cout << list[i].getFullName() << std::endl;
 	}
 
 }
+void splitIntoTwoLists(std::vector <People> rawlist, std::vector <People> &Alist, std::vector <People> &Blist)
+{
+	for (unsigned int  i = 0; i < rawlist.size(); i++)
+	{
+		if (i % 2 == 0)
+		{
+			Alist.push_back(rawlist[i]);
+		}
+		else
+		{
+			Blist.push_back(rawlist[i]);
+		}
+	}
 
+}
+void randomizeTheList(std::vector <People> &rawlist)
+{
+	std::random_shuffle(rawlist.begin(), rawlist.end());
+	std::random_shuffle(rawlist.begin(), rawlist.end());
+	std::random_shuffle(rawlist.begin(), rawlist.end());
+	std::random_shuffle(rawlist.begin(), rawlist.end());
+	std::random_shuffle(rawlist.begin(), rawlist.end());
+	std::random_shuffle(rawlist.begin(), rawlist.end());
+	
 
+}
+void writeOutData(std::vector <People> Alist, std::vector <People> Blist)
+{
 
+	std::ofstream output;
 
-int myrandom(int i) { return std::rand() % i; }
+	for (unsigned int  i = 0; i < Alist.size(); i++)
+	{
+		std::ostringstream myOutputFilePath;
+		myOutputFilePath << OUT_FILEPATH << Alist[i].getFirstName() << Alist[i].getLastName() << ".txt";
+		output.open(myOutputFilePath.str());
+		output << Blist[i].getFullName();
+		output.close();
+	}
+	for (unsigned int  i = 0; i < Blist.size(); i++)
+	{
+		std::ostringstream myOutputFilePath;
+		myOutputFilePath << OUT_FILEPATH << Blist[i].getFirstName() << Blist[i].getLastName() << ".txt";
+		output.open(myOutputFilePath.str());
+		output << Alist[i].getFullName();
+		output.close();
+	}
 
-
+}
 
 
 int main()
 {
-
+	//Read information from file to populate the raw list
+	//randomize the raw list
+	//split the raw list into two seperate lists
+	//the pairing of the first and section vector lists are the matches
+	//output the matches
 
 	std::vector <People> rawlist; 
-	readInData(rawlist);//read in the data
-
 	std::vector <People> Alist;
 	std::vector <People> Blist;
 
 
+	readInData(rawlist);//read in the data
+	printList(rawlist);
+	randomizeTheList(rawlist);
+	splitIntoTwoLists(rawlist, Alist, Blist);
 
-	printList(rawlist);//print out the list
+	writeOutData(Alist, Blist);
 }
